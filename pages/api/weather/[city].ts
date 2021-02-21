@@ -23,5 +23,7 @@ export default async function climate(request: NextApiRequest, response: NextApi
         } else {
             response.status(500)
         }
+    } else {
+        response.status(404).json("Cidade não encontrada.")
     }
 }

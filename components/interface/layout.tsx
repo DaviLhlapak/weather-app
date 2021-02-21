@@ -16,7 +16,7 @@ export default function LayoutComponent(props: LayoutProps) {
             </Head>
 
             <header className="container mx-auto flex justify-center items-center h-32 mb-8 select-none">
-                <h1 className="font-bold text-5xl flex items-end "><FaCloudSun className="text-7xl mr-4" /> Weather App</h1>
+                <h1 className="font-bold sm:text-5xl text-3xl flex items-end "><FaCloudSun className="sm:text-7xl text-5xl mr-4" /> Weather App</h1>
             </header>
 
             <main className="container mx-auto flex flex-col justify-center items-center">
