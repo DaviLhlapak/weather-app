@@ -1,7 +1,6 @@
 ![Weather App](public/thumb.png)
 
 ### Check the online demo: [Weather App](https://weather-app-self-three.vercel.app)
-<br>
 
 # About
 A weather application built with Next.js that returns the temperature and weather condition of a particular city using accuweather api.
