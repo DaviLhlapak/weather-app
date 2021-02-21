@@ -14,6 +14,7 @@ import CityClimate from "../interfaces/cityClimate";
 
 
 export default function HomePage() {
+    const [error, setError] = useState<string>("")
     const [city, setCity] = useState<string>("")
     const [searching, setSearching] = useState<boolean>(false)
     const [weather, setWeather] = useState<CityClimate>()
@@ -25,16 +26,23 @@ export default function HomePage() {
             formRef.current?.reset()
 
             setSearching(true)
+            setError("")
 
             setCity(data.city)
 
-            let weatherResponse = await axios.create().get(`/api/weather/${data.city}`)
-
-            if (weatherResponse.status == 200) {
-                setWeather(weatherResponse.data[0])
-            } else if (weatherResponse.status == 404) {
-
-            }
+            await axios.create().get(`/api/weather/${data.city}`).then((weatherResponse) => {
+                if (weatherResponse.status == 200) {
+                    setWeather(weatherResponse.data[0])
+                }
+            }).catch((error) => {
+                if (error.response) {
+                    if (error.response.status == 500) {
+                        setError("Algo deu errado, tente novamente mais tarde!")
+                    } else if (error.response.status == 404) {
+                        setError("Cidade não encontrada :(")
+                    }
+                }
+            })
 
             setSearching(false)
         }
@@ -100,16 +108,24 @@ export default function HomePage() {
 
             <FaSpinner className={"animate-spin border-white text-5xl " + ((searching) ? "flex" : "hidden")} />
 
-            <article className={"sm:w-80 w-72 shadow rounded-md bg-white mt-8 text-black " + ((weather != undefined) ? "visible" : "invisible")}>
-                <header className="pb-4">
-                    <div className="flex items-center mb-3 rounded-t-md bg-purple-800 text-white w-full py-4 px-3">
-                        {weatherIcon(weather?.WeatherIcon)}
-                        <h2 className="sm:text-3xl text-2xl font-bold capitalize ml-2.5">{city}</h2>
-                    </div>
-                    <h1 className="font-bold text-2xl px-6"> ºC {weather?.Temperature.Metric.Value}</h1>
-                    <p className="px-6">{weather?.WeatherText}</p>
-                </header>
-            </article>
+            {(error != "") ? (
+                <article className="sm:w-80 w-72 flex items-center justify-center shadow rounded-md bg-red-600 mt-8 text-white p-6">
+                    <h1 className="font-bold text-xl">{error}</h1>
+                </article>
+            ) : (
+                    <article className={"sm:w-80 w-72 shadow rounded-md bg-white mt-8 text-black " + ((weather != undefined && !searching) ? "visible" : "invisible")}>
+                        <header className="pb-4">
+                            <div className="flex items-center mb-3 rounded-t-md bg-purple-800 text-white w-full py-4 px-3">
+                                {weatherIcon(weather?.WeatherIcon)}
+                                <h2 className="sm:text-3xl text-2xl font-bold capitalize ml-2.5">{city}</h2>
+                            </div>
+                            <h1 className="font-bold text-2xl px-6"> ºC {weather?.Temperature.Metric.Value}</h1>
+                            <p className="px-6">{weather?.WeatherText}</p>
+                        </header>
+                    </article>
+                )
+            }
+
         </LayoutComponent>
     )
 }
